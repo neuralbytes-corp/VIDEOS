@@ -13,8 +13,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 FR = sys.argv[1]
 OUT = os.path.join(HERE, '..', 'public', 'patch')
 os.makedirs(OUT, exist_ok=True)
+ONLY = sys.argv[2].split(',') if len(sys.argv) > 2 else ['1', '2']
 for f in os.listdir(OUT):
-    os.remove(os.path.join(OUT, f))
+    if f.split('_')[0] in ONLY:
+        os.remove(os.path.join(OUT, f))
 FONT = os.path.join(HERE, 'fonts', 'lora-latin-700-normal.ttf')
 H_, W_ = 1280, 720
 SS = 4
@@ -85,11 +87,45 @@ def new_foil_shape(bx, sw):
         cv2.circle(im, P(*q), int(round(hw*SS)), 255, -1)
     for d in range(2):
         xa = x0 + d*(wd+gap)
-        xs = xa + 0.72*wd
+        xs = xa + 0.78*wd
         top = (xs, y0+hw); bot = (xs, y1-hw)
-        left = (xa+hw, y0+0.66*Hh); right = (xa+wd-hw, y0+0.66*Hh)
+        left = (xa+hw, y0+0.70*Hh); right = (xa+wd-hw, y0+0.70*Hh)
         seg(top, bot); seg(top, left); seg(left, right)
     return soft(im)
+
+LIGHT = np.array([-0.45, -0.6, 0.66]); LIGHT /= np.linalg.norm(LIGHT)
+HALF = LIGHT + np.array([0, 0, 1.0]); HALF /= np.linalg.norm(HALF)
+
+def tube_shade(mask, r):
+    """blinn-style shading scalar of a round tube of radius r whose footprint is `mask`"""
+    dn = cv2.distanceTransform(mask.astype(np.uint8), cv2.DIST_L2, 5)
+    hgt = np.sqrt(np.clip(1-(1-np.minimum(dn/r, 1))**2, 0, 1))*r
+    hgt = cv2.GaussianBlur(hgt, (0, 0), 1.2)
+    gx = cv2.Sobel(hgt, cv2.CV_32F, 1, 0, ksize=3)/8
+    gy = cv2.Sobel(hgt, cv2.CV_32F, 0, 1, ksize=3)/8
+    n = np.dstack([-gx, -gy, np.ones_like(gx)])
+    n /= np.linalg.norm(n, axis=2, keepdims=True)
+    return np.clip((n*HALF).sum(axis=2), 0, 1), dn
+
+def shade_lut(a, m, r, nb=24):
+    sc, _ = tube_shade(m, r)
+    idx = np.clip((sc[m]*nb).astype(int), 0, nb-1)
+    pix = a[m].astype(np.float32)
+    lut = np.zeros((nb, 3), np.float32); have = np.zeros(nb, bool)
+    for k in range(nb):
+        sel = idx == k
+        if sel.sum() > 8:
+            lut[k] = np.median(pix[sel], axis=0); have[k] = True
+    ks = np.where(have)[0]
+    for k in range(nb):  # fill gaps by nearest available bin
+        if not have[k]:
+            lut[k] = lut[ks[np.argmin(abs(ks-k))]]
+    # tube profile is monotonic in brightness: enforce it so noise can't make speckles
+    lum = lut.sum(axis=1)
+    for k in range(1, nb):
+        if lum[k] < lum[k-1]:
+            lut[k] = lut[k-1]; lum[k] = lum[k-1]
+    return lut
 
 def foil_style(a, m):
     dt = cv2.distanceTransform(m.astype(np.uint8), cv2.DIST_L2, 5)
@@ -154,16 +190,56 @@ def track_numeral(colour_fn, ref, bx, lo, hi, dx=30, dy=70):
             i += direction
     return pos, tmpl_full, Wg, Hg
 
+MASKS = {}
+
+def temporal_fill(a, i, md, base):
+    """fill the pixels hidden by the old numeral with pixels seen in neighbouring frames
+    (the balloons behind it move, the numeral does not); `base` is the inpainted fallback"""
+    out = base.copy()
+    todo = md > 0
+    ys, xs = np.where(todo)
+    y0, y1 = max(0, ys.min()-30), min(H_, ys.max()+31)
+    x0, x1 = max(0, xs.min()-30), min(W_, xs.max()+31)
+    gray = cv2.cvtColor(a, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    valid = (~cv2.dilate(todo.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool))[y0:y1, x0:x1]
+    tm = gray[y0:y1, x0:x1]
+    cands = []
+    for j in list(range(i-14, i-1)) + list(range(i+2, i+15)):
+        if j not in MASKS:
+            continue
+        b = load(j)
+        gj = cv2.cvtColor(b, cv2.COLOR_BGR2GRAY).astype(np.float32)
+        sy0, sy1, sx0, sx1 = max(0, y0-80), min(H_, y1+80), max(0, x0-24), min(W_, x1+24)
+        win = gj[sy0:sy1, sx0:sx1]
+        if win.shape[0] < tm.shape[0] or win.shape[1] < tm.shape[1]:
+            continue
+        res = cv2.matchTemplate(win, tm, cv2.TM_SQDIFF, mask=valid.astype(np.float32))
+        mn, _, loc, _ = cv2.minMaxLoc(res)
+        cands.append((mn/max(1, valid.sum()), j, sx0+loc[0]-x0, sy0+loc[1]-y0, b))
+    cands.sort(key=lambda c: c[0])
+    filled = np.zeros(len(xs), bool)
+    for score, j, dx, dy, b in cands[:6]:
+        if score > 260:      # ~16 grey levels rms: no reliable match
+            continue
+        mj = MASKS[j] > 0
+        tx, ty = xs+dx, ys+dy
+        inside = (tx >= 0) & (tx < W_) & (ty >= 0) & (ty < H_)
+        tx = np.clip(tx, 0, W_-1); ty = np.clip(ty, 0, H_-1)
+        pick = inside & ~mj[ty, tx] & ~filled
+        out[ys[pick], xs[pick]] = b[ty[pick], tx[pick]]
+        filled |= pick
+    return out
+
 def make_frame(a, i, scene, bx, style_mask, Wg, Hg, tmpl_foot, fixed):
     """returns (colour[H,W,3], alpha[H,W]) for the full frame"""
     px, py = bx[0], bx[1]
     foot = np.zeros(a.shape[:2], bool)
     foot[max(0, py-8):py+Hg+9, max(0, px-8):px+Wg+9] = True
-    occ = occluders(a) if scene == 2 else np.zeros(a.shape[:2], bool)
+    occ = occluders(a) if (scene == 2 and (i <= 274 or i >= 390)) else np.zeros(a.shape[:2], bool)
     gish = goldish(a, faded=(scene == 1 and i >= 172)) & ~occ
     mk = style_mask & foot
     # old glyph: seed colours + footprint-limited gold-ish pixels (dark rim, faded parts)
-    seed = cv2.dilate(mk.astype(np.uint8), np.ones((25, 25), np.uint8)).astype(bool)
+    seed = cv2.dilate(mk.astype(np.uint8), np.ones((9, 9) if scene == 2 else (25, 25), np.uint8)).astype(bool)
     old = mk | (foot & gish & seed)
     if old.sum() < 600:
         old = old | (foot & gish)
@@ -182,14 +258,34 @@ def make_frame(a, i, scene, bx, style_mask, Wg, Hg, tmpl_foot, fixed):
         col_new = cv2.GaussianBlur(tex, (0, 0), 0.6)
         md = cv2.dilate(old.astype(np.uint8)*255, np.ones((11, 11), np.uint8))
     else:
-        lut, rimcol, dmax = foil_style(a, mk if mk.sum() > 500 else old)
-        sw = fixed.setdefault('sw', 2*(dmax+7.0))
+        filled = cv2.morphologyEx(old.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8)).astype(bool)
+        dt_old = cv2.distanceTransform(filled.astype(np.uint8), cv2.DIST_L2, 5)
+        r_old = fixed.setdefault('r', 21.0)  # measured tube radius of the original 50
+        # quantile colour ramp of the original numeral (dark rim -> bright highlight)
+        pix = a[filled].astype(np.float32)
+        order = np.argsort(pix.sum(axis=1))
+        nq = 64
+        qcol = np.array([np.median(pix[order[int(k*len(order)/nq):int((k+1)*len(order)/nq)]], axis=0) for k in range(nq)])
+        sw = 2*r_old
         new = new_foil_shape((px, py, px+Wg, py+Hg), sw)
         new = new*(~occ)
-        col_new = paint_foil(new, lut, rimcol, sw)
-        md = cv2.dilate(cv2.morphologyEx(old.astype(np.uint8)*255, cv2.MORPH_CLOSE, np.ones((17, 17), np.uint8)),
-                        np.ones((33, 33), np.uint8))
-    inp = cv2.inpaint(a, md, 7, cv2.INPAINT_TELEA).astype(np.float32)
+        sc, dn_new = tube_shade(new > 0.5, r_old)
+        nm = new > 0.5
+        rank = np.zeros(sc.shape, np.float32)
+        vals = sc[nm]
+        rank[nm] = (np.argsort(np.argsort(vals))/max(1, len(vals)-1)).astype(np.float32)
+        kk = np.clip(rank*(nq-1), 0, nq-1)
+        k0 = np.floor(kk).astype(int); k1 = np.minimum(k0+1, nq-1); fr = (kk-k0)[..., None]
+        col_new = qcol[k0]*(1-fr) + qcol[k1]*fr
+        md = cv2.dilate(cv2.morphologyEx(old.astype(np.uint8)*255, cv2.MORPH_CLOSE, np.ones((7, 7), np.uint8)),
+                        np.ones((5, 5), np.uint8))
+    if fixed.get('pass') == 1:
+        MASKS[i] = md
+        return None
+    inp = cv2.inpaint(a, md, 7, cv2.INPAINT_TELEA)
+    if scene == 2 and i in MASKS:
+        inp = temporal_fill(a, i, md, inp)
+    inp = inp.astype(np.float32)
     al = np.maximum(cv2.GaussianBlur(md, (3, 3), 0).astype(np.float32)/255, new)
     col = inp*(1-new[..., None]) + col_new*new[..., None]
     return col, al
@@ -200,7 +296,10 @@ def run():
         (1, gold1, 100, (204, 614, 513, 845), 40, 182, [0], (150, 300, 580, 1280)),
         (2, gold2, 340, (253, 683, 501, 861), 236, 412, [], (200, 600, 570, 1280)),
     ]
+    only = [int(x) for x in sys.argv[2].split(',')] if len(sys.argv) > 2 else [1, 2]
     for scene, cf, ref, bx, lo, hi, extra, crop in jobs:
+        if scene not in only:
+            continue
         pos, tmpl, Wg, Hg = track_numeral(cf, ref, bx, lo, hi)
         print('scene', scene, 'tracked', min(pos), max(pos), len(pos))
         fixed = {}
@@ -208,12 +307,13 @@ def run():
         if scene == 1:  # frame 0 is a still poster of the settled 50
             pos[0] = (bx[0]+ (pos[100][0]-bx[0]) , bx[1]); frames = [0] + frames
             pos[0] = pos[100] if False else pos[0]
-        for i in frames:
+        passes = [1, 2] if scene == 2 else [2]
+        for ps in passes:
+          fixed['pass'] = ps
+          for i in frames:
             a = load(i)
             b = (pos[i][0], pos[i][1])
             style = cf(a)
-            if scene == 2:
-                style = style | (cf(a, 45) & (cv2.dilate(style.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool) if False else True) & False)
             r = make_frame(a, i, scene, b, style, Wg, Hg, tmpl, fixed)
             if r is None:
                 continue
@@ -222,7 +322,11 @@ def run():
             rgba = np.dstack([col, al*255])[y0:y1, x0:x1]
             cv2.imwrite(f'{OUT}/{scene}_{i:04d}.png', rgba.astype(np.uint8))
             track[i] = dict(crop=list(crop), s=scene, bb=[b[0], b[1], b[0]+Wg, b[1]+Hg])
-    json.dump(track, open(os.path.join(HERE, '..', 'src', 'track.json'), 'w'))
+    tp = os.path.join(HERE, '..', 'src', 'track.json')
+    old_t = json.load(open(tp)) if os.path.exists(tp) else {}
+    old_t = {k: v for k, v in old_t.items() if str(v['s']) not in [str(x) for x in only]}
+    old_t.update({str(k): v for k, v in track.items()})
+    json.dump(old_t, open(tp, 'w'))
     print(len(track), 'frames patched')
 
 run()
