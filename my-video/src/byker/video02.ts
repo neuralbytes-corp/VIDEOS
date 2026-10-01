@@ -105,4 +105,6 @@ export const V02_CTA = {
   ],
 };
 
-export const V02_MUSIC_VOLUME = 0.5;
+// Audio de TikTok que subiste (dura 60 s; se recorta a los 50 s del video con fundido final).
+export const V02_MUSIC_FILE = "byker/tiktok-v02.mp3";
+export const V02_MUSIC_VOLUME = 0.55;

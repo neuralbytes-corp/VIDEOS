@@ -1,4 +1,4 @@
-"""Genera una pista original (libre de derechos) para el video 2.
+"""Genera una pista original (libre de derechos). El video 2 usa ahora el audio de TikTok; el video 3 usa music-v03.
 
 Uso: python3 tools/make_music.py  ->  public/byker/music-v02.wav
 Ritmo moderno suave: bombo, clap, hi-hat, bajo, pad y arpegio (Am-F-C-G, 104 BPM).

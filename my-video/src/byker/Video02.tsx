@@ -25,6 +25,7 @@ import {
   V02_HOOK,
   V02_INCLUDES,
   V02_INCLUDES_TITLE,
+  V02_MUSIC_FILE,
   V02_MUSIC_VOLUME,
   V02_PORT,
   V02_PRICE,
@@ -1077,10 +1078,10 @@ export const Video02: React.FC = () => (
   <AbsoluteFill>
     <DarkBackground />
     <Audio
-      src={staticFile("byker/music-v02.wav")}
+      src={staticFile(V02_MUSIC_FILE)}
       volume={(f) =>
         V02_MUSIC_VOLUME *
-        interpolate(f, [0, 30, V02_TOTAL - 45, V02_TOTAL], [0, 1, 1, 0], clamp)
+        interpolate(f, [0, 8, V02_TOTAL - 45, V02_TOTAL], [0.3, 1, 1, 0], clamp)
       }
     />
     {seq("hook", <HookScene />, { fadeIn: 1 })}
