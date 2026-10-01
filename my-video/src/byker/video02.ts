@@ -11,8 +11,8 @@ export const V02_SCENES = {
 export const V02_TOTAL = 1500;
 
 export const V02_HOOK = {
-  title: "iPHONE 14 PRO vs iPHONE 15 PRO",
-  subtitle: "¿Cuál te conviene?",
+  title: "¿Cuál es la diferencia entre",
+  subtitle: "iPHONE 14 PRO y iPHONE 15 PRO?",
   a: "Negro espacial",
   b: "Negro titanio",
 };

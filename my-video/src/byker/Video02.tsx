@@ -162,9 +162,10 @@ const HookScene: React.FC = () => {
           textAlign: "center",
           fontFamily: HEAD,
           fontWeight: 700,
-          fontSize: 118,
-          lineHeight: 1.02,
+          fontSize: 108,
+          lineHeight: 1.1,
           letterSpacing: 1.5,
+          textTransform: "uppercase",
           color: "#fff",
           opacity: t1,
           transform: `translateY(${(1 - t1) * 40}px)`,
@@ -174,13 +175,12 @@ const HookScene: React.FC = () => {
       </div>
       <div
         style={{
-          marginTop: 14,
-          fontFamily: BODY,
-          fontWeight: 600,
-          fontSize: 44,
-          letterSpacing: 6,
-          textTransform: "uppercase",
-          color: SOFT,
+          marginTop: 12,
+          fontFamily: HEAD,
+          fontWeight: 700,
+          fontSize: 64,
+          letterSpacing: 2,
+          color: "#ffd60a",
           opacity: t2,
         }}
       >
