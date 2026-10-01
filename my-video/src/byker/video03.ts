@@ -11,8 +11,9 @@ export const V03_TOTAL = 1200;
 
 export const V03_HOOK = {
   badge: "Alerta",
-  line1: "No compres un",
-  line2: "iPhone sin esto",
+  line1: "Nunca compres",
+  line2: "un iPhone",
+  line3: "sin antes saber esto",
   stamp: "Bloqueado",
   caption: "Fuera de la lista blanca, tu equipo puede quedar sin señal",
 };

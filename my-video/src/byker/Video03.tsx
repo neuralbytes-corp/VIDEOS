@@ -66,11 +66,12 @@ const HookScene: React.FC = () => {
   const s0 = slam(2);
   const s1 = slam(10);
   const s2 = slam(18);
+  const s3 = slam(26);
   const shake = Math.sin(f * 2.6) * 16 * Math.max(0, 1 - f / 26);
   const flash = interpolate(f, [0, 3, 14], [0.9, 0.5, 0], clamp);
   const pulse = 0.1 + 0.08 * Math.sin(f / 5);
   const ph = spring({
-    frame: f - 26,
+    frame: f - 36,
     fps,
     config: { damping: 20, stiffness: 90 },
   });
@@ -98,19 +99,19 @@ const HookScene: React.FC = () => {
       <div
         style={{
           position: "absolute",
-          top: 690,
+          top: 790,
           left: "50%",
-          marginLeft: -310,
+          marginLeft: -290,
           opacity: ph,
           transform: `translateY(${(1 - ph) * 140}px)`,
         }}
       >
-        <Photo model="15" width={620} />
+        <Photo model="15" width={580} />
       </div>
       <div
         style={{
           position: "absolute",
-          top: 1010,
+          top: 1080,
           left: "50%",
           transform: `translate(-50%,-50%) rotate(-11deg) scale(${interpolate(stamp, [0, 1], [3.2, 1])})`,
           opacity: Math.min(1, stamp * 2),
@@ -171,7 +172,7 @@ const HookScene: React.FC = () => {
             textAlign: "center",
             fontFamily: HEAD,
             fontWeight: 700,
-            fontSize: 150,
+            fontSize: 136,
             lineHeight: 1,
             letterSpacing: 1,
             textTransform: "uppercase",
@@ -179,7 +180,10 @@ const HookScene: React.FC = () => {
           }}
         >
           {line(V03_HOOK.line1, s1, "#fff")}
-          {line(V03_HOOK.line2, s2, "#ffd60a")}
+          {line(V03_HOOK.line2, s2, "#fff")}
+          <div style={{ fontSize: 92 }}>
+            {line(V03_HOOK.line3, s3, "#ffd60a")}
+          </div>
         </div>
       </div>
       <AbsoluteFill style={{ background: "#fff", opacity: flash }} />
