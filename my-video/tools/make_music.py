@@ -3,12 +3,15 @@
 Uso: python3 tools/make_music.py  ->  public/byker/music-v02.wav
 Ritmo moderno suave: bombo, clap, hi-hat, bajo, pad y arpegio (Am-F-C-G, 104 BPM).
 """
+import sys
 import wave
 import numpy as np
 
+# Uso: python3 tools/make_music.py [nombre] [bpm] [compases]   (por defecto: v02 104 22)
+NAME = sys.argv[1] if len(sys.argv) > 1 else "v02"
 SR = 44100
-BPM = 104
-BARS = 22
+BPM = int(sys.argv[2]) if len(sys.argv) > 2 else 104
+BARS = int(sys.argv[3]) if len(sys.argv) > 3 else 22
 BEAT = 60 / BPM
 BAR = BEAT * 4
 N = int(SR * BAR * BARS)
@@ -95,7 +98,7 @@ for bar in range(BARS):
             add(out, t0 + off * BEAT, bass(midi(root), BEAT * 0.9))
     # batería
     if bar >= 1:
-        for b in (0, 2):
+        for b in (0, 1, 2, 3) if BPM >= 118 else (0, 2):
             add(out, t0 + b * BEAT, kick())
         if bar >= 3:
             add(out, t0 + 3.5 * BEAT, kick() * 0.6)
@@ -111,6 +114,12 @@ for bar in range(BARS):
             if k % 2 == 0 or bar % 2 == 1:
                 add(out, t0 + k * BEAT / 4, pluck(midi(seq[k % 4] + (12 if k % 8 == 7 else 0))))
 
+# impacto inicial para el gancho (solo pistas rápidas)
+if BPM >= 118:
+    tb = t_(1.2)
+    boom = np.sin(2 * np.pi * (38 + 90 * np.exp(-tb * 9)) * tb) * np.exp(-tb * 3.2)
+    add(out, 0, boom * 1.1)
+
 # eco simple para dar espacio
 echo = np.zeros(N)
 d = int(SR * BEAT * 0.75)
@@ -120,7 +129,7 @@ out = out + echo
 out = np.tanh(out * 1.3)
 out = out / np.max(np.abs(out)) * 0.8
 pcm = (out * 32767).astype(np.int16)
-with wave.open("public/byker/music-v02.wav", "wb") as w:
+with wave.open(f"public/byker/music-{NAME}.wav", "wb") as w:
     w.setnchannels(1)
     w.setsampwidth(2)
     w.setframerate(SR)

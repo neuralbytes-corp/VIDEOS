@@ -38,19 +38,19 @@ import { LineIcon } from "./Icons";
 
 const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 const ease = Easing.bezier(0.16, 1, 0.3, 1);
-const HEAD = "Oswald, sans-serif";
-const BODY = "Montserrat, sans-serif";
-const SOFT = "#a9a9b0";
-const LINE = "rgba(255,255,255,0.20)";
-const CARD = "rgba(255,255,255,0.055)";
-const GREEN = "#3ddc84";
+export const HEAD = "Oswald, sans-serif";
+export const BODY = "Montserrat, sans-serif";
+export const SOFT = "#a9a9b0";
+export const LINE = "rgba(255,255,255,0.20)";
+export const CARD = "rgba(255,255,255,0.055)";
+export const GREEN = "#3ddc84";
 
-const useReveal = (from: number, len = 30) => {
+export const useReveal = (from: number, len = 30) => {
   const f = useCurrentFrame();
   return ease(interpolate(f, [from, from + len], [0, 1], clamp));
 };
 
-const DarkBackground: React.FC = () => {
+export const DarkBackground: React.FC = () => {
   const f = useCurrentFrame();
   const x = 40 + Math.sin(f / 160) * 12;
   return (
@@ -62,14 +62,14 @@ const DarkBackground: React.FC = () => {
   );
 };
 
-const WhiteLogo: React.FC<{ width: number }> = ({ width }) => (
+export const WhiteLogo: React.FC<{ width: number }> = ({ width }) => (
   <Img
     src={staticFile("byker/logo-white.png")}
     style={{ width, mixBlendMode: "screen" }}
   />
 );
 
-const Photo: React.FC<{ model: "14" | "15"; width: number }> = ({
+export const Photo: React.FC<{ model: "14" | "15"; width: number }> = ({
   model,
   width,
 }) => (
@@ -86,11 +86,12 @@ const Photo: React.FC<{ model: "14" | "15"; width: number }> = ({
   />
 );
 
-const Title: React.FC<{
+export const Title: React.FC<{
   children: React.ReactNode;
   top?: number;
   size?: number;
-}> = ({ children, top = 150, size = 120 }) => {
+  lh?: number;
+}> = ({ children, top = 150, size = 120, lh = 1.12 }) => {
   const t = useReveal(6);
   return (
     <div
@@ -101,7 +102,7 @@ const Title: React.FC<{
         fontWeight: 700,
         fontSize: size,
         letterSpacing: 2,
-        lineHeight: 1.02,
+        lineHeight: lh,
         textTransform: "uppercase",
         color: "#fff",
         opacity: t,
@@ -889,7 +890,9 @@ const Instagram: React.FC<{ size: number }> = ({ size }) => (
   </svg>
 );
 
-const CtaScene: React.FC = () => {
+export const CtaScene: React.FC<{ title?: string }> = ({
+  title = V02_CTA.title,
+}) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const logo = useReveal(0, 30);
@@ -924,7 +927,7 @@ const CtaScene: React.FC = () => {
           transform: `translateY(${(1 - t) * 30}px)`,
         }}
       >
-        {V02_CTA.title}
+        {title}
       </div>
       <div
         style={{
