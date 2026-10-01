@@ -31,7 +31,7 @@ const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 const ease = Easing.bezier(0.16, 1, 0.3, 1);
 
 // Aparece y desaparece con fundido suave dentro de su Sequence.
-const Scene: React.FC<{
+export const Scene: React.FC<{
   children: React.ReactNode;
   fadeIn?: number;
   fadeOut?: number;
@@ -47,7 +47,7 @@ const Scene: React.FC<{
   return <AbsoluteFill style={{ opacity: o }}>{children}</AbsoluteFill>;
 };
 
-const Logo: React.FC<{ width: number; style?: React.CSSProperties }> = ({
+export const Logo: React.FC<{ width: number; style?: React.CSSProperties }> = ({
   width,
   style,
 }) => (
@@ -63,7 +63,7 @@ const Logo: React.FC<{ width: number; style?: React.CSSProperties }> = ({
   />
 );
 
-const Background: React.FC = () => {
+export const Background: React.FC = () => {
   const f = useCurrentFrame();
   const drift = interpolate(f, [0, 900], [0, 120]);
   return (
@@ -76,7 +76,7 @@ const Background: React.FC = () => {
 };
 
 // ---------- Escena 1: logo ----------
-const LogoScene: React.FC = () => {
+export const LogoScene: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const p = spring({
@@ -289,7 +289,10 @@ const TrustScene: React.FC = () => {
 };
 
 // ---------- Escena 4: cierre ----------
-const CtaScene: React.FC = () => {
+export const CtaScene: React.FC<{ title?: string; subtitle?: string }> = ({
+  title = CTA.title,
+  subtitle = CTA.subtitle,
+}) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const logo = spring({
@@ -336,7 +339,7 @@ const CtaScene: React.FC = () => {
           transform: `translateY(${(1 - a) * 30}px)`,
         }}
       >
-        {CTA.title}
+        {title}
       </div>
       <div
         style={{
@@ -348,7 +351,7 @@ const CtaScene: React.FC = () => {
           transform: `translateY(${(1 - b) * 30}px)`,
         }}
       >
-        {CTA.subtitle}
+        {subtitle}
       </div>
       <div
         style={{

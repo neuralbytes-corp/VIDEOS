@@ -1,9 +1,21 @@
 import React from "react";
 import { interpolate } from "remotion";
 
-type Kind = "shield" | "box" | "check" | "chat";
+type Kind = "shield" | "box" | "check" | "chat" | "globe" | "receipt";
 
 const PATHS: Record<Kind, string[]> = {
+  globe: [
+    "M32 8 A24 24 0 1 0 32 56 A24 24 0 1 0 32 8 Z",
+    "M8 32 H56",
+    "M32 8 C20 20 20 44 32 56",
+    "M32 8 C44 20 44 44 32 56",
+  ],
+  receipt: [
+    "M16 8 H48 V56 L42 51 L37 56 L32 51 L27 56 L22 51 L16 56 Z",
+    "M23 20 H41",
+    "M23 29 H41",
+    "M23 38 H34",
+  ],
   check: ["M14 33 L27 46 L50 20"],
   shield: [
     "M32 8 L52 16 V32 C52 44 43 53 32 58 C21 53 12 44 12 32 V16 Z",
