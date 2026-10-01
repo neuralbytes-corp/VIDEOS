@@ -1,23 +1,26 @@
-// Video 2 — iPhone 14 Pro vs iPhone 15 Pro. Textos editables.
+// Video 2 — iPhone 14 Pro vs iPhone 15 Pro (diseño oscuro de los afiches).
 export const V02_SCENES = {
-  hook: { from: 0, duration: 135 },
-  design: { from: 120, duration: 210 },
-  port: { from: 315, duration: 195 },
-  table: { from: 495, duration: 315 },
-  verdict: { from: 795, duration: 195 },
-  cta: { from: 975, duration: 240 },
+  hook: { from: 0, duration: 150 },
+  design: { from: 135, duration: 195 },
+  port: { from: 315, duration: 180 },
+  table: { from: 480, duration: 300 },
+  includes: { from: 765, duration: 270 },
+  price: { from: 1020, duration: 240 },
+  cta: { from: 1245, duration: 255 },
 };
-export const V02_TOTAL = 1215;
+export const V02_TOTAL = 1500;
 
 export const V02_HOOK = {
-  title: "iPhone 14 Pro vs iPhone 15 Pro",
+  title: "iPHONE 14 PRO vs iPHONE 15 PRO",
   subtitle: "¿Cuál te conviene?",
+  a: "Negro espacial",
+  b: "Negro titanio",
 };
 
 export const V02_DESIGN = {
   title: "Diseño y materiales",
-  a: { name: "14 Pro", material: "Acero inoxidable", weight: "206 g" },
-  b: { name: "15 Pro", material: "Titanio", weight: "187 g" },
+  a: { name: "iPHONE 14 PRO", material: "Acero inoxidable", weight: "206 g" },
+  b: { name: "iPHONE 15 PRO", material: "Titanio", weight: "187 g" },
   note: "El 15 Pro pesa 19 g menos y tiene bordes de pantalla más finos",
 };
 
@@ -53,24 +56,53 @@ export const V02_TABLE = {
   ],
 };
 
-export const V02_VERDICT = {
+// Lo que incluye cada equipo (tomado de tus afiches).
+export const V02_INCLUDES_TITLE = "Incluye";
+export const V02_INCLUDES: {
+  icon: "receipt" | "plug" | "shield" | "calendar" | "battery";
+  title: string;
+  text: string;
+}[] = [
+  { icon: "receipt", title: "Boleta", text: "Para registrar en lista blanca" },
+  { icon: "plug", title: "Accesorios", text: "Cubo y cable" },
+  { icon: "shield", title: "Garantía", text: "Por defectos de fábrica" },
+  { icon: "calendar", title: "6 meses", text: "De garantía" },
+  { icon: "battery", title: "Batería 100%", text: "Salud óptima" },
+];
+
+// price: texto del precio. Deja "" para mostrar "Consulta tu precio".
+export const V02_PRICE = {
   title: "¿Cuál elegir?",
+  label: "Precio promoción",
+  consult: "Consulta tu precio",
   a: {
-    name: "iPhone 14 Pro",
-    text: "Si quieres ahorrar y no necesitas USB-C",
+    name: "iPHONE 14 PRO",
+    storage: "256GB",
+    color: "Negro espacial",
+    price: "1,950",
+    tag: "Ideal si quieres ahorrar",
   },
   b: {
-    name: "iPhone 15 Pro",
-    text: "Si quieres lo más nuevo: USB-C, titanio y más potencia",
+    name: "iPHONE 15 PRO",
+    storage: "256GB",
+    color: "Negro titanio",
+    price: "",
+    tag: "Lo más nuevo: USB-C y titanio",
   },
   note: "Los dos son excelentes. Te asesoramos según tu presupuesto.",
 };
 
 export const V02_CTA = {
   title: "¿Quieres importar tu iPhone?",
-  lead: "Escríbenos al",
+  lead: "Realiza tu pedido",
   phone: "944 180 362",
-  footer: "Byker Store · Importaciones",
+  follow: "Síguenos en",
+  handle: "Byker Store",
+  trust: [
+    "Productos 100% originales",
+    "Envíos a todo el Perú",
+    "Compra segura",
+  ],
 };
 
-export const V02_MUSIC_VOLUME = 0.55;
+export const V02_MUSIC_VOLUME = 0.5;

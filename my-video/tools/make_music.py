@@ -8,7 +8,7 @@ import numpy as np
 
 SR = 44100
 BPM = 104
-BARS = 18
+BARS = 22
 BEAT = 60 / BPM
 BAR = BEAT * 4
 N = int(SR * BAR * BARS)
