@@ -6,10 +6,27 @@ export const HEIGHT = 1920;
 export const SCENES = {
   logo: { from: 0, duration: 120 },
   hero: { from: 105, duration: 240 },
-  trust: { from: 330, duration: 345 },
-  cta: { from: 660, duration: 240 },
+  highlights: { from: 330, duration: 330 },
+  trust: { from: 645, duration: 345 },
+  cta: { from: 975, duration: 240 },
 };
-export const TOTAL_FRAMES = 900;
+export const TOTAL_FRAMES = 1215;
+
+export const HIGHLIGHTS_TITLE = "Cada iPhone incluye";
+export const HIGHLIGHTS = {
+  receipt: {
+    title: "Boleta de compra",
+    text: "Para que puedas registrar tu equipo en lista blanca",
+  },
+  battery: {
+    title: "Batería al 100%",
+    text: "Salud de batería en su máximo nivel",
+  },
+  looks: {
+    title: "Estética 10/10",
+    text: "Cuidado y presentación impecables",
+  },
+};
 
 export const HERO = {
   eyebrow: "BYKER STORE · IMPORTACIONES",

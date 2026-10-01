@@ -23,6 +23,7 @@ import {
   TRUST_POINTS,
   TRUST_TITLE,
 } from "./config";
+import { HighlightsScene } from "./Highlights";
 import { IPhone } from "./IPhone";
 import { LineIcon } from "./Icons";
 
@@ -415,6 +416,15 @@ export const BykerStore: React.FC = () => (
     >
       <Scene duration={SCENES.hero.duration}>
         <HeroScene />
+      </Scene>
+    </Sequence>
+    <Sequence
+      from={SCENES.highlights.from}
+      durationInFrames={SCENES.highlights.duration}
+      premountFor={FPS}
+    >
+      <Scene duration={SCENES.highlights.duration}>
+        <HighlightsScene />
       </Scene>
     </Sequence>
     <Sequence
