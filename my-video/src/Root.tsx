@@ -11,6 +11,10 @@ import { Video04 } from "./byker/Video04";
 import { V04_TOTAL } from "./byker/video04";
 import { Video05 } from "./byker/Video05";
 import { V05_TOTAL } from "./byker/video05";
+import { Video06 } from "./byker/Video06";
+import { V06_TOTAL } from "./byker/video06";
+import { Video07 } from "./byker/Video07";
+import { V07_TOTAL } from "./byker/video07";
 import { BykerStore } from "./byker/BykerStore";
 import { FPS, HEIGHT, TOTAL_FRAMES, WIDTH } from "./byker/config";
 
@@ -69,6 +73,22 @@ export const RemotionRoot: React.FC = () => {
         id="Video05UsosUGC"
         component={Video05}
         durationInFrames={V05_TOTAL}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="Video06Cinematico"
+        component={Video06}
+        durationInFrames={V06_TOTAL}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="Video07Hype"
+        component={Video07}
+        durationInFrames={V07_TOTAL}
         fps={FPS}
         width={WIDTH}
         height={HEIGHT}

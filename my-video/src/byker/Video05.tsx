@@ -226,7 +226,7 @@ const Centered: React.FC<{ children: React.ReactNode; top?: number }> = ({
 );
 
 // ---------- 1. Gancho ----------
-const HookShot: React.FC = () => {
+export const HookShot: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const s = spring({
@@ -251,7 +251,7 @@ const HookShot: React.FC = () => {
 };
 
 // ---------- 2. Cámara ----------
-const CameraShot: React.FC = () => {
+export const CameraShot: React.FC = () => {
   const f = useCurrentFrame();
   const focus = interpolate(f, [20, 40], [1.6, 1], {
     ...clamp,
@@ -384,7 +384,7 @@ const CameraShot: React.FC = () => {
 };
 
 // ---------- 3. Redes / scroll ----------
-const FeedShot: React.FC = () => {
+export const FeedShot: React.FC = () => {
   const f = useCurrentFrame();
   const CARD = 900;
   const off = (f * 11) % (CARD + 20);
@@ -465,7 +465,7 @@ const FeedShot: React.FC = () => {
 };
 
 // ---------- 4. Video selfie ----------
-const SelfieShot: React.FC = () => {
+export const SelfieShot: React.FC = () => {
   const f = useCurrentFrame();
   const sec = Math.floor(f / FPS);
   const blink = Math.floor(f / 15) % 2 === 0;
@@ -569,7 +569,7 @@ const SelfieShot: React.FC = () => {
 
 // ---------- 5. Juegos (horizontal) ----------
 // El contenido se dibuja en vertical y el marco se gira -90°: la derecha del dibujo queda arriba.
-const GameShot: React.FC = () => {
+export const GameShot: React.FC = () => {
   const f = useCurrentFrame();
   const lane = Math.sin(f / 14) * 70;
   const stripe = (f * 24) % 170;
@@ -643,7 +643,7 @@ const GameShot: React.FC = () => {
 };
 
 // ---------- 6. Carga / batería 100% ----------
-const ChargeShot: React.FC = () => {
+export const ChargeShot: React.FC = () => {
   const f = useCurrentFrame();
   const p = interpolate(f, [10, 100], [0.8, 1], {
     ...clamp,

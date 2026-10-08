@@ -12,7 +12,7 @@ NAME = sys.argv[1] if len(sys.argv) > 1 else "v02"
 SR = 44100
 BPM = int(sys.argv[2]) if len(sys.argv) > 2 else 104
 BARS = int(sys.argv[3]) if len(sys.argv) > 3 else 22
-STYLE = sys.argv[4] if len(sys.argv) > 4 else "minor"  # minor (Am-F-C-G) | pop (C-G-Am-F, más brillante)
+STYLE = sys.argv[4] if len(sys.argv) > 4 else "minor"  # minor (Am-F-C-G) | pop (C-G-Am-F, más brillante) | ambient (elegante, sin batería)
 BEAT = 60 / BPM
 BAR = BEAT * 4
 N = int(SR * BAR * BARS)
@@ -89,7 +89,7 @@ chords = [
     (43, [55, 59, 62]),  # G
 ]
 
-if STYLE == "pop":  # C - G - Am - F, acordes en registro más alto
+if STYLE in ("pop", "ambient"):  # C - G - Am - F, acordes en registro más alto
     chords = [
         (36, [64, 67, 72]),  # C
         (43, [62, 67, 71]),  # G
@@ -97,11 +97,20 @@ if STYLE == "pop":  # C - G - Am - F, acordes en registro más alto
         (41, [65, 69, 72]),  # F
     ]
 
+AMBIENT = STYLE == "ambient"  # elegante: sin batería, pad amplio y notas largas con eco
+
 for bar in range(BARS):
     t0 = bar * BAR
     root, notes = chords[bar % 4]
-    # pad toda la pista
-    add(out, t0, pad([midi(n) for n in notes], BAR + 0.3))
+    # pad toda la pista (más presente en ambient)
+    add(out, t0, pad([midi(n) for n in notes], BAR + 0.3) * (2.6 if AMBIENT else 1.0))
+    if AMBIENT:
+        add(out, t0, bass(midi(root), BAR * 0.95) * 0.7)  # nota grave larga
+        for k in range(4):  # notas suaves, una por tiempo, con cola larga
+            if (bar + k) % 2 == 0 or k == 0:
+                note = notes[k % 3] + 12 + (12 if k == 3 else 0)
+                add(out, t0 + k * BEAT, pluck(midi(note), 1.6) * 1.6)
+        continue
     if bar >= 1:  # bajo en corcheas sincopadas
         for k, off in enumerate([0, 1.5, 2, 3.25]):
             add(out, t0 + off * BEAT, bass(midi(root), BEAT * 0.9))
@@ -132,8 +141,13 @@ if BPM >= 118:
 # eco simple para dar espacio
 echo = np.zeros(N)
 d = int(SR * BEAT * 0.75)
-echo[d:] = out[:-d] * 0.28
+echo[d:] = out[:-d] * (0.55 if AMBIENT else 0.28)
 out = out + echo
+if AMBIENT:  # segundo eco largo = reverb simple
+    d2 = int(SR * BEAT * 1.5)
+    e2 = np.zeros(N)
+    e2[d2:] = out[:-d2] * 0.35
+    out = out + e2
 
 out = np.tanh(out * 1.3)
 out = out / np.max(np.abs(out)) * 0.8
