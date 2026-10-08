@@ -1,6 +1,6 @@
 """Genera una pista original (libre de derechos). El video 2 usa ahora el audio de TikTok; el video 3 usa music-v03.
 
-Uso: python3 tools/make_music.py  ->  public/byker/music-v02.wav
+Uso: python3 tools/make_music.py [nombre] [bpm] [compases] [minor|pop]  ->  public/byker/music-<nombre>.wav
 Ritmo moderno suave: bombo, clap, hi-hat, bajo, pad y arpegio (Am-F-C-G, 104 BPM).
 """
 import sys
@@ -12,6 +12,7 @@ NAME = sys.argv[1] if len(sys.argv) > 1 else "v02"
 SR = 44100
 BPM = int(sys.argv[2]) if len(sys.argv) > 2 else 104
 BARS = int(sys.argv[3]) if len(sys.argv) > 3 else 22
+STYLE = sys.argv[4] if len(sys.argv) > 4 else "minor"  # minor (Am-F-C-G) | pop (C-G-Am-F, más brillante)
 BEAT = 60 / BPM
 BAR = BEAT * 4
 N = int(SR * BAR * BARS)
@@ -87,6 +88,14 @@ chords = [
     (36, [55, 60, 64]),  # C
     (43, [55, 59, 62]),  # G
 ]
+
+if STYLE == "pop":  # C - G - Am - F, acordes en registro más alto
+    chords = [
+        (36, [64, 67, 72]),  # C
+        (43, [62, 67, 71]),  # G
+        (45, [64, 69, 72]),  # Am
+        (41, [65, 69, 72]),  # F
+    ]
 
 for bar in range(BARS):
     t0 = bar * BAR

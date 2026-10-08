@@ -9,10 +9,10 @@ export const V04_SCENES = {
 };
 export const V04_TOTAL = 1170;
 
-// Voz de ElevenLabs: pon true cuando hayas generado los mp3 con tools/make_voice.py
-export const V04_VOICE_READY = false;
+// Voz de ElevenLabs (voz «Horacio - Seguro & Confiable»), mp3 en public/byker/voz-v04/
+export const V04_VOICE_READY = true;
 export const V04_VOICE_DIR = "byker/voz-v04";
-export const V04_MUSIC_FILE = "byker/music-v04.wav";
+export const V04_MUSIC_FILE = "byker/music-v04b.wav";
 // Con voz la música baja para que se entienda.
 export const V04_MUSIC_VOLUME = V04_VOICE_READY ? 0.22 : 0.5;
 

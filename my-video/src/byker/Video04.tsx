@@ -759,7 +759,7 @@ export const Video04: React.FC = () => (
       ? voice.map((v) => (
           <Sequence key={v.id} from={v.frame} layout="none">
             <Audio
-              src={staticFile(`${V04_VOICE_DIR}/${v.id}.mp3`)}
+              src={staticFile(`${V04_VOICE_DIR}/${v.id}.wav`)}
               volume={1}
             />
           </Sequence>
