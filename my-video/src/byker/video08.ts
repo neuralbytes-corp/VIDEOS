@@ -61,5 +61,5 @@ export const V08_BAT = {
 
 export const V08_RECAP_TITLE = "Tu checklist";
 export const V08_CTA_TITLE = "Compra con confianza";
-export const V08_MUSIC_FILE = "byker/music-v08.wav";
-export const V08_MUSIC_VOLUME = 0.5;
+export const V08_MUSIC_FILE = "byker/flamingo-digital.mp3";
+export const V08_MUSIC_VOLUME = 0.45;
