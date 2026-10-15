@@ -13,13 +13,13 @@ import "@fontsource/jetbrains-mono/latin-500.css";
 import { V09_COMPARE, V09_RECS, V09_TIP } from "./video09";
 
 // Carrusel de fotos para TikTok (estilo etiquetas sobre fondo): 1080x1920, una foto por frame.
-const SANS = "Inter, sans-serif";
-const MONO = "'JetBrains Mono', monospace";
-const RED = "#ff2d1f";
-const GREEN = "#3ddc84";
+export const SANS = "Inter, sans-serif";
+export const MONO = "'JetBrains Mono', monospace";
+export const RED = "#ff2d1f";
+export const GREEN = "#3ddc84";
 
 type Part = { t: string; red?: boolean };
-type Slide = {
+export type Slide = {
   bg: string;
   tag?: string;
   num?: string;
@@ -29,7 +29,7 @@ type Slide = {
   card: React.ReactNode;
 };
 
-const box = (bg: string, color: string): React.CSSProperties => ({
+export const box = (bg: string, color: string): React.CSSProperties => ({
   display: "inline-block",
   background: bg,
   color,
@@ -171,7 +171,7 @@ const GRADS = {
   graph: "linear-gradient(180deg,#1b1b1f 0%,#0a0a0c 100%)",
 };
 
-const SLIDES: Slide[] = [
+export const SLIDES: Slide[] = [
   {
     bg: GRADS.warm,
     title: "",

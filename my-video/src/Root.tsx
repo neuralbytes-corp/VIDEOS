@@ -21,6 +21,7 @@ import { Video09 } from "./byker/Video09";
 import { V09_TOTAL } from "./byker/video09";
 import { Carousel09 } from "./byker/Carousel09";
 import { VE09_TOTAL, VideoEtiquetas09 } from "./byker/VideoEtiquetas09";
+import { Video09B, V09B_TOTAL } from "./byker/Video09B";
 import { BykerStore } from "./byker/BykerStore";
 import { FPS, HEIGHT, TOTAL_FRAMES, WIDTH } from "./byker/config";
 
@@ -128,6 +129,14 @@ export const RemotionRoot: React.FC = () => {
         id="Video09Etiquetas"
         component={VideoEtiquetas09}
         durationInFrames={VE09_TOTAL}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="Video09Cartel"
+        component={Video09B}
+        durationInFrames={V09B_TOTAL}
         fps={FPS}
         width={WIDTH}
         height={HEIGHT}
