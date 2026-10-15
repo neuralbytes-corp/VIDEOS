@@ -15,7 +15,17 @@ import { FPS } from "./config";
 import { MONO, RED, SANS, box } from "./Carousel09";
 import { SLIDES07 as SLIDES } from "./Carousel07";
 const V09_MUSIC_FILE = "byker/music-v10.wav";
-const V09_MUSIC_VOLUME = 0.5;
+const V09_MUSIC_VOLUME = 0.22;
+
+// Voz (ElevenLabs, Horacio): un archivo por línea, con su frame de entrada.
+const VOICE = [
+  { id: "01", frame: 8 },
+  { id: "02", frame: 100 },
+  { id: "03", frame: 240 },
+  { id: "04", frame: 380 },
+  { id: "05", frame: 520 },
+  { id: "06", frame: 660 },
+];
 import { Scene } from "./BykerStore";
 
 // Video 9 (versión cartel): mismo diseño que el carrusel, con el iPhone siempre de fondo.
@@ -27,9 +37,9 @@ const SCENES = {
   c2: { from: 230, duration: 150 },
   c3: { from: 370, duration: 150 },
   c4: { from: 510, duration: 150 },
-  cta: { from: 650, duration: 140 },
+  cta: { from: 650, duration: 160 },
 };
-export const V07B_TOTAL = 790;
+export const V07B_TOTAL = 810;
 
 // ---------- iPhone de fondo, siempre visible ----------
 const PhoneBg: React.FC = () => {
@@ -421,6 +431,11 @@ export const Video07B: React.FC = () => (
         )
       }
     />
+    {VOICE.map((v) => (
+      <Sequence key={v.id} from={v.frame} layout="none">
+        <Audio src={staticFile(`byker/voz-v07/${v.id}.mp3`)} volume={1.3} />
+      </Sequence>
+    ))}
     <Backdrop />
     <PhoneBg />
     {seq("cover", <Cover />, { fadeIn: 1 })}
