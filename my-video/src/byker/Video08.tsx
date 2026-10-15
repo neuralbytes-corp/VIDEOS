@@ -899,6 +899,15 @@ const seq = (
   </Sequence>
 );
 
+// Líneas de voz (ElevenLabs, voz Horacio). Faltan 03, 04 y 07: se agregan aquí al generarlas.
+const VOICE = [
+  { id: "01", frame: 8 },
+  { id: "02", frame: 135 },
+  { id: "05", frame: 690 },
+  { id: "06", frame: 875 },
+  { id: "08", frame: 1170 },
+];
+
 export const Video08: React.FC = () => (
   <AbsoluteFill>
     <DarkBackground />
@@ -909,6 +918,11 @@ export const Video08: React.FC = () => (
         interpolate(f, [0, 8, V08_TOTAL - 45, V08_TOTAL], [0.3, 1, 1, 0], clamp)
       }
     />
+    {VOICE.map((v) => (
+      <Sequence key={v.id} from={v.frame} layout="none">
+        <Audio src={staticFile(`byker/voz-v08/${v.id}.mp3`)} volume={1.3} />
+      </Sequence>
+    ))}
     {seq("hook", <HookScene />, { fadeIn: 1 })}
     {seq("i1", <ICloud />)}
     {seq("i2", <Imei />)}
