@@ -1,18 +1,18 @@
 // Video 9 — iPhone 13 vs 14 vs 15: ¿cuál conviene según tu presupuesto? Textos editables.
 export const V09_SCENES = {
-  hook: { from: 0, duration: 120 },
-  compare: { from: 110, duration: 270 },
-  r1: { from: 370, duration: 190 },
-  r2: { from: 550, duration: 190 },
-  r3: { from: 730, duration: 190 },
-  tip: { from: 910, duration: 130 },
-  cta: { from: 1030, duration: 225 },
+  hook: { from: 0, duration: 90 },
+  compare: { from: 80, duration: 210 },
+  r1: { from: 280, duration: 150 },
+  r2: { from: 420, duration: 150 },
+  r3: { from: 560, duration: 150 },
+  tip: { from: 700, duration: 100 },
+  cta: { from: 790, duration: 200 },
 };
-export const V09_TOTAL = 1255;
+export const V09_TOTAL = 990;
 
 export const V09_HOOK = {
-  l1: "Dime cuánto tienes",
-  l2: "y te digo cuál comprar",
+  l1: "Lo que naue te dice",
+  l2: "sobre estos iPhones",
   models: ["13", "14", "15"],
 };
 

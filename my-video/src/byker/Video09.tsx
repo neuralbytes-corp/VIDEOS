@@ -86,7 +86,7 @@ const HookScene: React.FC = () => {
       <div style={{ marginTop: 90, display: "flex", gap: 30 }}>
         {V09_HOOK.models.map((m, i) => {
           const s = spring({
-            frame: f - (30 + i * 8),
+            frame: f - (22 + i * 6),
             fps,
             config: { damping: 12, stiffness: 160 },
           });
@@ -177,7 +177,7 @@ const Compare: React.FC = () => {
       </div>
       {V09_COMPARE.rows.map((r, i) => {
         const s = spring({
-          frame: f - (24 + i * 28),
+          frame: f - (12 + i * 18),
           fps,
           config: { damping: 14, stiffness: 150 },
         });
@@ -305,7 +305,7 @@ const Rec: React.FC<{ idx: number }> = ({ idx }) => {
       >
         {r.points.map((p, i) => {
           const q = spring({
-            frame: f - (40 + i * 26),
+            frame: f - (22 + i * 16),
             fps,
             config: { damping: 14, stiffness: 150 },
           });
@@ -378,7 +378,7 @@ const Tip: React.FC = () => {
       >
         {V09_TIP.items.map((p, i) => {
           const q = spring({
-            frame: f - (16 + i * 18),
+            frame: f - (8 + i * 12),
             fps,
             config: { damping: 14, stiffness: 150 },
           });
