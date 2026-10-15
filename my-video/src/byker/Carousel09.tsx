@@ -40,7 +40,7 @@ export const box = (bg: string, color: string): React.CSSProperties => ({
   lineHeight: 1.1,
 });
 
-const Cols: React.FC<{
+export const Cols: React.FC<{
   cols: { k: string; v: string }[];
   hi?: number;
   small?: boolean;
@@ -106,7 +106,9 @@ const Cols: React.FC<{
   </div>
 );
 
-const Rows: React.FC<{ rows: { a: string; b: string }[] }> = ({ rows }) => (
+export const Rows: React.FC<{ rows: { a: string; b: string }[] }> = ({
+  rows,
+}) => (
   <div
     style={{
       width: "100%",
@@ -162,7 +164,7 @@ const row = (i: number) => V09_COMPARE.rows[i];
 const colsOf = (i: number) =>
   row(i).v.map((v, k) => ({ k: V09_COMPARE.cols[k], v }));
 
-const GRADS = {
+export const GRADS = {
   warm: "radial-gradient(circle at 78% 40%,#7a6a52 0%,#2a2118 38%,#0c0a08 80%)",
   sky: "linear-gradient(180deg,#2f6fb3 0%,#7fb2e0 45%,#c7dff2 100%)",
   night: "radial-gradient(circle at 30% 30%,#242428,#050506 75%)",
