@@ -11,7 +11,7 @@ export const V09_SCENES = {
 export const V09_TOTAL = 990;
 
 export const V09_HOOK = {
-  l1: "Lo que naue te dice",
+  l1: "Lo que no te dicen",
   l2: "sobre estos iPhones",
   models: ["13", "14", "15"],
 };

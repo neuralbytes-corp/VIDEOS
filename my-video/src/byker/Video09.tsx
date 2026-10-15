@@ -74,7 +74,7 @@ const HookScene: React.FC = () => {
         </div>
         <div
           style={{
-            fontSize: 84,
+            fontSize: 104,
             color: YELLOW,
             transform: `scale(${interpolate(b, [0, 1], [2.4, 1])})`,
             opacity: Math.min(1, b * 2),
