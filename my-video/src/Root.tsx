@@ -19,6 +19,7 @@ import { Video08 } from "./byker/Video08";
 import { V08_TOTAL } from "./byker/video08";
 import { Video09 } from "./byker/Video09";
 import { V09_TOTAL } from "./byker/video09";
+import { Carousel09 } from "./byker/Carousel09";
 import { BykerStore } from "./byker/BykerStore";
 import { FPS, HEIGHT, TOTAL_FRAMES, WIDTH } from "./byker/config";
 
@@ -112,6 +113,15 @@ export const RemotionRoot: React.FC = () => {
         fps={FPS}
         width={WIDTH}
         height={HEIGHT}
+      />
+      <Composition
+        id="Carrusel09"
+        component={Carousel09}
+        durationInFrames={1}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+        defaultProps={{ i: 0 }}
       />
     </>
   );
