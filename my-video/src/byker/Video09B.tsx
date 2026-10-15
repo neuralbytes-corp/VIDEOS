@@ -69,7 +69,6 @@ const PhoneBg: React.FC = () => {
           transform: `rotate(${rot}deg) scale(${zoom})`,
           transformOrigin: "50% 100%",
           opacity: 0.62,
-          filter: "drop-shadow(0 40px 80px rgba(0,0,0,0.6))",
         }}
       >
         {img("byker/phone14.png", 1 - swap)}
