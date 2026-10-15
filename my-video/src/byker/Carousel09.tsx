@@ -1,5 +1,12 @@
 import React from "react";
-import { AbsoluteFill, Img, staticFile } from "remotion";
+import {
+  AbsoluteFill,
+  Img,
+  spring,
+  staticFile,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
 import "@fontsource/inter/latin-800.css";
 import "@fontsource/inter/latin-900.css";
 import "@fontsource/jetbrains-mono/latin-500.css";
@@ -268,6 +275,56 @@ const SLIDES: Slide[] = [
 
 export const CAROUSEL09_COUNT = SLIDES.length;
 
+const AnimCtx = React.createContext(false);
+
+// Entrada con resorte; en fotos fijas (animate=false) se muestra tal cual.
+const Pop: React.FC<{
+  d: number;
+  abs?: boolean;
+  children: React.ReactNode;
+}> = ({ d, abs, children }) => {
+  const animate = React.useContext(AnimCtx);
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const s = animate
+    ? spring({
+        frame: f - d,
+        fps,
+        config: { damping: 13, stiffness: 170, mass: 0.7 },
+      })
+    : 1;
+  const base: React.CSSProperties = abs
+    ? { position: "absolute", left: 0, top: 0, right: 0, bottom: 0 }
+    : {};
+  return (
+    <div
+      style={{
+        ...base,
+        opacity: Math.min(1, s * 2),
+        transform: `translateY(${(1 - s) * 60}px) scale(${0.96 + 0.04 * s})`,
+        transformOrigin: "left top",
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+const Stagger: React.FC<{
+  style: React.CSSProperties;
+  start: number;
+  step: number;
+  children: React.ReactNode;
+}> = ({ style, start, step, children }) => (
+  <div style={style}>
+    {React.Children.toArray(children).map((c, k) => (
+      <Pop key={k} d={start + k * step}>
+        {c}
+      </Pop>
+    ))}
+  </div>
+);
+
 const Cover: React.FC = () => (
   <>
     <Img
@@ -280,7 +337,9 @@ const Cover: React.FC = () => (
         opacity: 0.55,
       }}
     />
-    <div
+    <Stagger
+      start={2}
+      step={8}
       style={{
         position: "absolute",
         left: 70,
@@ -312,7 +371,7 @@ const Cover: React.FC = () => (
       >
         (13, 14 y 15. qué cambia de verdad.)
       </div>
-    </div>
+    </Stagger>
   </>
 );
 
@@ -328,7 +387,9 @@ const Cta: React.FC = () => (
         opacity: 0.5,
       }}
     />
-    <div
+    <Stagger
+      start={2}
+      step={8}
       style={{
         position: "absolute",
         left: 70,
@@ -368,109 +429,120 @@ const Cta: React.FC = () => (
       >
         Byker Store · importaciones · envíos a todo el Perú
       </div>
-    </div>
+    </Stagger>
   </>
 );
 
-export const Carousel09: React.FC<{ i: number }> = ({ i }) => {
+export const Carousel09: React.FC<{ i: number; animate?: boolean }> = ({
+  i,
+  animate = false,
+}) => {
   const s = SLIDES[i] ?? SLIDES[0];
   const last = i === SLIDES.length - 1;
   return (
-    <AbsoluteFill style={{ background: s.bg }}>
-      <AbsoluteFill
-        style={{
-          background:
-            "linear-gradient(180deg,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0) 30%,rgba(0,0,0,0.45) 100%)",
-        }}
-      />
-      {i === 0 ? <Cover /> : last ? <Cta /> : null}
-      {s.num ? (
-        <>
-          <div
-            style={{
-              position: "absolute",
-              top: 130,
-              right: 50,
-              background: "#0d0d0d",
-              color: "#fff",
-              fontFamily: MONO,
-              fontSize: 30,
-              padding: "4px 14px",
-            }}
-          >
-            {s.tag}
-          </div>
-          <div
-            style={{
-              position: "absolute",
-              left: 70,
-              top: 230,
-              width: 940,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              gap: 12,
-            }}
-          >
-            <div style={{ ...box("#fff", "#111"), fontSize: 190 }}>{s.num}</div>
-            <div style={{ ...box("#fff", "#111"), fontSize: 108 }}>
-              {s.title}
-            </div>
+    <AnimCtx.Provider value={animate}>
+      <AbsoluteFill style={{ background: s.bg }}>
+        <AbsoluteFill
+          style={{
+            background:
+              "linear-gradient(180deg,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0) 30%,rgba(0,0,0,0.45) 100%)",
+          }}
+        />
+        {i === 0 ? <Cover /> : last ? <Cta /> : null}
+        {s.num ? (
+          <>
             <div
               style={{
-                marginTop: 14,
-                fontFamily: SANS,
-                fontWeight: 800,
-                fontSize: 50,
-                letterSpacing: "-0.03em",
-                lineHeight: 1.45,
-                color: "#111",
-              }}
-            >
-              {s.desc.map((p, k) => (
-                <span
-                  key={k}
-                  style={{
-                    background: "#fff",
-                    color: p.red ? RED : "#111",
-                    padding: "6px 14px",
-                    boxDecorationBreak: "clone",
-                    WebkitBoxDecorationBreak: "clone",
-                  }}
-                >
-                  {p.t}
-                </span>
-              ))}
-            </div>
-            <div
-              style={{
-                marginTop: 14,
+                position: "absolute",
+                top: 130,
+                right: 50,
                 background: "#0d0d0d",
                 color: "#fff",
                 fontFamily: MONO,
-                fontSize: 28,
-                padding: "4px 12px",
+                fontSize: 30,
+                padding: "4px 14px",
               }}
             >
-              {s.label}
+              {s.tag}
             </div>
-          </div>
-          <div
-            style={{
-              position: "absolute",
-              left: 70,
-              top: 880,
-              width: 940,
-              height: 560,
-              border: "8px solid #fff",
-              boxShadow: "0 20px 50px rgba(0,0,0,0.45)",
-              overflow: "hidden",
-            }}
-          >
-            {s.card}
-          </div>
-        </>
-      ) : null}
-    </AbsoluteFill>
+            <Stagger
+              start={4}
+              step={9}
+              style={{
+                position: "absolute",
+                left: 70,
+                top: 230,
+                width: 940,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                gap: 12,
+              }}
+            >
+              <div style={{ ...box("#fff", "#111"), fontSize: 190 }}>
+                {s.num}
+              </div>
+              <div style={{ ...box("#fff", "#111"), fontSize: 108 }}>
+                {s.title}
+              </div>
+              <div
+                style={{
+                  marginTop: 14,
+                  fontFamily: SANS,
+                  fontWeight: 800,
+                  fontSize: 50,
+                  letterSpacing: "-0.03em",
+                  lineHeight: 1.45,
+                  color: "#111",
+                }}
+              >
+                {s.desc.map((p, k) => (
+                  <span
+                    key={k}
+                    style={{
+                      background: "#fff",
+                      color: p.red ? RED : "#111",
+                      padding: "6px 14px",
+                      boxDecorationBreak: "clone",
+                      WebkitBoxDecorationBreak: "clone",
+                    }}
+                  >
+                    {p.t}
+                  </span>
+                ))}
+              </div>
+              <div
+                style={{
+                  marginTop: 14,
+                  background: "#0d0d0d",
+                  color: "#fff",
+                  fontFamily: MONO,
+                  fontSize: 28,
+                  padding: "4px 12px",
+                }}
+              >
+                {s.label}
+              </div>
+            </Stagger>
+            <Pop d={44} abs>
+              <div
+                style={{
+                  position: "absolute",
+                  left: 70,
+                  top: 880,
+                  width: 940,
+                  height: 560,
+                  border: "8px solid #fff",
+                  boxShadow: "0 20px 50px rgba(0,0,0,0.45)",
+                  overflow: "hidden",
+                }}
+              >
+                {s.card}
+              </div>
+            </Pop>
+          </>
+        ) : null}
+      </AbsoluteFill>
+    </AnimCtx.Provider>
   );
 };
