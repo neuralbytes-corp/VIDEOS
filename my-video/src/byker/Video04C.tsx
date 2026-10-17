@@ -3,7 +3,6 @@ import {
   AbsoluteFill,
   Audio,
   Easing,
-  Img,
   Sequence,
   interpolate,
   spring,
@@ -76,50 +75,268 @@ const Backdrop: React.FC = () => {
   );
 };
 
-// ---------- iPhone siempre de fondo (con golpes de cámara en cada corte) ----------
+// ---------- iPhone dibujado (vector) con la pantalla de Salud de la batería ----------
 const PhoneBg: React.FC = () => {
   const f = useCurrentFrame();
-  const bob = Math.sin(f / 26) * 18;
-  const rot = Math.sin(f / 41) * 1.6 - 4;
+  const bob = Math.sin(f / 26) * 16;
+  const rot = Math.sin(f / 41) * 1.2 - 3;
   let kick = 0;
   for (const b of B)
-    if (f >= b) kick = Math.max(kick, 0.07 * Math.exp(-(f - b) / 8));
-  const zoom = 1 + (f / V04C_TOTAL) * 0.1 + kick;
+    if (f >= b) kick = Math.max(kick, 0.06 * Math.exp(-(f - b) / 8));
+  const zoom = 1 + (f / V04C_TOTAL) * 0.08 + kick;
   const rise = interpolate(f, [0, 30], [0, 1], { ...clamp, easing: easeOut });
-  const swap = interpolate(f, [440, 460], [0, 1], clamp);
-  const sweepX = interpolate((f % 120) / 120, [0, 1], [-700, 1400]);
-  const img = (src: string, o: number) => (
-    <Img
-      src={staticFile(src)}
-      style={{ position: "absolute", left: 0, top: 0, width: 980, opacity: o }}
-    />
-  );
+  const sweepX = interpolate((f % 140) / 140, [0, 1], [-500, 1100]);
+  const glow = 0.5 + 0.5 * Math.sin(f / 18);
+  const gridShift = (f * 0.6) % 90;
+  const R = 150;
+  const C = 2 * Math.PI * R;
   return (
     <AbsoluteFill style={{ overflow: "hidden" }}>
+      {/* rejilla técnica que se desplaza lentamente */}
+      <AbsoluteFill
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.06) 1px,transparent 1px)",
+          backgroundSize: "90px 90px",
+          backgroundPosition: `${gridShift}px ${gridShift}px`,
+          WebkitMaskImage:
+            "radial-gradient(circle at 50% 85%,#000 0%,transparent 70%)",
+          maskImage:
+            "radial-gradient(circle at 50% 85%,#000 0%,transparent 70%)",
+        }}
+      />
       <div
         style={{
           position: "absolute",
-          right: -170,
-          bottom: -220 + (1 - rise) * 600 - bob,
-          width: 980,
-          height: 1800,
+          left: 40,
+          bottom: -200,
+          width: 1000,
+          height: 1000,
+          borderRadius: 500,
+          background: `radial-gradient(circle,rgba(61,220,132,${0.22 + 0.1 * glow}),rgba(61,220,132,0) 65%)`,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          left: 160,
+          bottom: -1010 + (1 - rise) * 600 - bob,
+          width: 760,
+          height: 1560,
           transform: `rotate(${rot}deg) scale(${zoom})`,
           transformOrigin: "50% 100%",
-          opacity: 0.6,
+          opacity: 1,
         }}
       >
-        {img("byker/phone14.png", 1 - swap)}
-        {img("byker/phone15.png", swap)}
-        <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
+        {/* botones laterales */}
+        <div
+          style={{
+            position: "absolute",
+            left: -8,
+            top: 250,
+            width: 8,
+            height: 90,
+            borderRadius: 4,
+            background: "#3a3d44",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            left: -8,
+            top: 370,
+            width: 8,
+            height: 150,
+            borderRadius: 4,
+            background: "#3a3d44",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            right: -8,
+            top: 330,
+            width: 8,
+            height: 210,
+            borderRadius: 4,
+            background: "#3a3d44",
+          }}
+        />
+        {/* cuerpo */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: 120,
+            background:
+              "linear-gradient(145deg,#4a4d55 0%,#1b1c20 45%,#0a0a0c 100%)",
+            boxShadow:
+              "inset 0 0 0 3px rgba(255,255,255,0.18),0 40px 90px rgba(0,0,0,0.6)",
+          }}
+        />
+        {/* pantalla */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 16,
+            borderRadius: 106,
+            overflow: "hidden",
+            background:
+              "radial-gradient(circle at 50% 28%,#16402d 0%,#08120d 55%,#040605 100%)",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: 26,
+              left: "50%",
+              marginLeft: -115,
+              width: 230,
+              height: 64,
+              borderRadius: 32,
+              background: "#000",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              top: 40,
+              left: 70,
+              fontFamily: MONO,
+              fontSize: 28,
+              color: "#cfd3d8",
+            }}
+          >
+            9:41
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              top: 120,
+              width: "100%",
+              textAlign: "center",
+              fontFamily: SANS,
+              fontWeight: 800,
+              fontSize: 40,
+              color: "#e8ebee",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            Salud de la batería
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              top: 240,
+              left: "50%",
+              marginLeft: -170,
+              width: 340,
+              height: 340,
+            }}
+          >
+            <svg width="340" height="340" viewBox="0 0 340 340">
+              <circle
+                cx="170"
+                cy="170"
+                r={R}
+                stroke="rgba(255,255,255,0.1)"
+                strokeWidth="26"
+                fill="none"
+              />
+              <circle
+                cx="170"
+                cy="170"
+                r={R}
+                stroke={GREEN}
+                strokeWidth="26"
+                fill="none"
+                strokeLinecap="round"
+                strokeDasharray={C}
+                strokeDashoffset={C * 0.0}
+                transform="rotate(-90 170 170)"
+                style={{
+                  filter: `drop-shadow(0 0 ${14 + 10 * glow}px rgba(61,220,132,0.8))`,
+                }}
+              />
+            </svg>
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontFamily: SANS,
+                fontWeight: 900,
+                fontSize: 104,
+                letterSpacing: "-0.05em",
+                color: "#fff",
+              }}
+            >
+              100%
+            </div>
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              top: 620,
+              width: "100%",
+              textAlign: "center",
+              fontFamily: MONO,
+              fontSize: 26,
+              color: "#9aa3ab",
+            }}
+          >
+            CAPACIDAD MÁXIMA
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              top: 720,
+              left: 60,
+              right: 60,
+              height: 90,
+              borderRadius: 28,
+              background: "rgba(255,255,255,0.06)",
+              border: "2px solid rgba(255,255,255,0.12)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              top: 745,
+              left: 90,
+              fontFamily: SANS,
+              fontWeight: 700,
+              fontSize: 30,
+              color: "#dfe3e6",
+            }}
+          >
+            Batería
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              top: 745,
+              right: 90,
+              fontFamily: SANS,
+              fontWeight: 800,
+              fontSize: 30,
+              color: GREEN,
+            }}
+          >
+            Original de Apple
+          </div>
+          {/* brillo que cruza la pantalla */}
           <div
             style={{
               position: "absolute",
               top: -200,
               left: sweepX,
-              width: 160,
-              height: 2400,
+              width: 140,
+              height: 1900,
               background:
-                "linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.28),rgba(255,255,255,0))",
+                "linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.16),rgba(255,255,255,0))",
               transform: "rotate(18deg)",
             }}
           />
