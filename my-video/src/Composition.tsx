@@ -1,5 +1,11 @@
 import React from "react";
-import { AbsoluteFill, Img, OffthreadVideo, staticFile, useCurrentFrame } from "remotion";
+import {
+  AbsoluteFill,
+  Img,
+  OffthreadVideo,
+  staticFile,
+  useCurrentFrame,
+} from "remotion";
 import track from "./track.json";
 import trackName from "./track_name.json";
 
