@@ -29,6 +29,7 @@ import { Carousel07View } from "./byker/Carousel07View";
 import { Video04C, V04C_TOTAL } from "./byker/Video04C";
 import { Video10C, V10C_TOTAL } from "./byker/Video10C";
 import { Video10D, V10D_TOTAL } from "./byker/Video10D";
+import { Video11D, V11D_TOTAL } from "./byker/Video11D";
 import { BykerStore } from "./byker/BykerStore";
 import { FPS, HEIGHT, TOTAL_FRAMES, WIDTH } from "./byker/config";
 
@@ -202,6 +203,15 @@ export const RemotionRoot: React.FC = () => {
         id="Video10EstafasOscuro"
         component={Video10D}
         durationInFrames={V10D_TOTAL}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+        defaultProps={{ music: true }}
+      />
+      <Composition
+        id="Video11Preguntas"
+        component={Video11D}
+        durationInFrames={V11D_TOTAL}
         fps={FPS}
         width={WIDTH}
         height={HEIGHT}
