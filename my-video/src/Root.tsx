@@ -1,3 +1,4 @@
+import { V12D_TOTAL, Video12D } from "./byker/Video12D";
 import "./index.css";
 import { Composition } from "remotion";
 import { MyComposition } from "./Composition";
@@ -213,6 +214,15 @@ export const RemotionRoot: React.FC = () => {
         id="Video11Preguntas"
         component={Video11D}
         durationInFrames={V11D_TOTAL}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+        defaultProps={{ music: true }}
+      />
+      <Composition
+        id="Video09ProOscuro"
+        component={Video12D}
+        durationInFrames={V12D_TOTAL}
         fps={FPS}
         width={WIDTH}
         height={HEIGHT}
