@@ -30,6 +30,7 @@ import { Video04C, V04C_TOTAL } from "./byker/Video04C";
 import { Video10C, V10C_TOTAL } from "./byker/Video10C";
 import { Video10D, V10D_TOTAL } from "./byker/Video10D";
 import { Video11D, V11D_TOTAL } from "./byker/Video11D";
+import { Video12C, V12C_TOTAL } from "./byker/Video12C";
 import { BykerStore } from "./byker/BykerStore";
 import { FPS, HEIGHT, TOTAL_FRAMES, WIDTH } from "./byker/config";
 
@@ -216,6 +217,14 @@ export const RemotionRoot: React.FC = () => {
         width={WIDTH}
         height={HEIGHT}
         defaultProps={{ music: true }}
+      />
+      <Composition
+        id="Video09Pro"
+        component={Video12C}
+        durationInFrames={V12C_TOTAL}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
       />
     </>
   );
